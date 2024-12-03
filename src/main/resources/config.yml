@@ -1,0 +1,23 @@
+##################################
+#                                #
+#           Redis-Homes          #
+#          v1.0 by DevSnx        #
+#                                #
+##################################
+
+# Language (en, de)
+lang: en
+
+# Redis Server Connection
+redis:
+  host: "localhost"
+  port: 6379
+  username: "homes"
+  password: "homes"
+
+mysql:
+  host: "localhost"
+  port: 6379
+  username: "homes"
+  password: "homes"
+  database: "homes"
