@@ -2,6 +2,7 @@ package de.devsnx.redisHomes.manager;
 
 import com.zaxxer.hikari.HikariDataSource;
 import eu.thesimplecloud.api.CloudAPI;
+import eu.thesimplecloud.api.service.ICloudService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -216,20 +217,35 @@ public class HomeManager {
             return;
         }
 
-        String currentServer = CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(player.getUniqueId()).getConnectedServer().getName();
+        String currentServer = CloudAPI.getInstance()
+                .getCloudPlayerManager()
+                .getCachedCloudPlayer(player.getUniqueId())
+                .getConnectedServer()
+                .getName();
         String targetServer = home.getServer();
 
+        // Spieler ist bereits auf dem Zielserver
         if (currentServer.equals(targetServer)) {
             teleportToHome(player, homeName);
             return;
         }
 
-        if(!CloudAPI.getInstance().getCloudServiceManager().getCloudServiceByName(targetServer).isOnline()) {
-            player.sendMessage("Der Server auf dem dein Home ist, ist Offline!");
+        // Zielserver ist offline
+        ICloudService iCloudService = CloudAPI.getInstance()
+                .getCloudServiceManager()
+                .getCloudServiceByName(targetServer);
+        if (iCloudService == null || !iCloudService.isOnline()) {
+            player.sendMessage("Der Server, auf dem dein Home ist, ist offline!");
             return;
         }
 
-        // Redis-Nachricht zum Serverwechsel senden
+        // Spieler auf den Zielserver verbinden
+        CloudAPI.getInstance()
+                .getCloudPlayerManager()
+                .getCachedCloudPlayer(player.getUniqueId())
+                .connect(iCloudService);
+
+        // Redis-Nachricht vorbereiten
         String channel = "home-teleport";
         String message = String.format("%s:%s:%s:%s:%f:%f:%f:%f:%f",
                 player.getUniqueId().toString(),
@@ -242,9 +258,10 @@ public class HomeManager {
                 home.getYaw(),
                 home.getPitch());
 
+        // Nachricht an Redis senden
         try {
             jedis.publish(channel, message);
-            player.sendMessage("Wechsle zum Server \"" + targetServer + "\", um zu deinem Home \"" + homeName + "\" teleportiert zu werden.");
+            logger.info("Redis: " + message);
         } catch (Exception e) {
             logger.severe("Fehler beim Senden der Redis-Nachricht: " + e.getMessage());
             player.sendMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");

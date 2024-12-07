@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.UUID;
+
 public final class RedisHomes extends JavaPlugin {
 
     public static RedisHomes instance;
@@ -62,12 +64,14 @@ public final class RedisHomes extends JavaPlugin {
                 public void onMessage(String channel, String message) {
                     if (!channel.equals("home-teleport")) return;
 
+                    getLogger().severe("Teleport anfrage erhalten von Redis");
+
+                    // Nachricht analysieren
                     String[] parts = message.split(":");
                     if (parts.length != 9) return;
 
                     String uuid = parts[0];
                     String playerName = parts[1];
-                    String serverName = parts[2];
                     String worldName = parts[3];
                     double x = Double.parseDouble(parts[4]);
                     double y = Double.parseDouble(parts[5]);
@@ -75,9 +79,10 @@ public final class RedisHomes extends JavaPlugin {
                     float yaw = Float.parseFloat(parts[7]);
                     float pitch = Float.parseFloat(parts[8]);
 
-                    Bukkit.getScheduler().runTask(getInstance(), () -> {
+                    // Verzögert ausführen, falls der Spieler noch nicht verbunden ist
+                    Bukkit.getScheduler().runTaskLater(getInstance(), () -> {
                         Player player = Bukkit.getPlayer(playerName);
-                        if (player == null || !player.getUniqueId().toString().equals(uuid)) return;
+                        if (player == null || !UUID.fromString(uuid).equals(player.getUniqueId())) return;
 
                         World world = Bukkit.getWorld(worldName);
                         if (world == null) {
@@ -88,7 +93,7 @@ public final class RedisHomes extends JavaPlugin {
                         Location location = new Location(world, x, y, z, yaw, pitch);
                         player.teleport(location);
                         player.sendMessage("Du wurdest zu deinem Home teleportiert.");
-                    });
+                    }, 40L);
                 }
             }, "home-teleport");
         }).start();
