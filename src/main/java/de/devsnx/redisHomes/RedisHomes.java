@@ -65,6 +65,7 @@ public final class RedisHomes extends JavaPlugin {
                     if (!channel.equals("home-teleport")) return;
 
                     getLogger().severe("Teleport anfrage erhalten von Redis");
+                    getLogger().severe("Redis:" + message);
 
                     // Nachricht analysieren
                     String[] parts = message.split(":");
