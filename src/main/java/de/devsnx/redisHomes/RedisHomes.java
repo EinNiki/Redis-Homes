@@ -93,7 +93,7 @@ public final class RedisHomes extends JavaPlugin {
                         player.sendMessage("Du wurdest zu deinem Home teleportiert.");
                     });
                 }
-            }, "server-teleport");
+            }, "home-teleport");
         }).start();
     }
 
