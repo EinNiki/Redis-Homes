@@ -39,24 +39,18 @@ public class HomeCommand implements CommandExecutor {
 
         switch (command.getName().toLowerCase()) {
             case "sethome":
-                if (homeManager.homeExists(player, homeName)) {
+                if (homeManager.existsHome(player, homeName)) {
                     player.sendMessage("§cHome '" + homeName + "' existiert bereits.");
                     break;
                 }
 
-                homeManager.saveHome(player, homeName,
-                        Bukkit.getServer().getName(),
-                        player.getLocation().getX(),
-                        player.getLocation().getY(),
-                        player.getLocation().getZ(),
-                        player.getLocation().getYaw(),
-                        player.getLocation().getPitch());
+                homeManager.setHome(player, homeName, player.getLocation());
 
                 player.sendMessage("§aHome '" + homeName + "' gesetzt.");
                 break;
 
             case "home":
-                if (!homeManager.homeExists(player, homeName)) {
+                if (!homeManager.existsHome(player, homeName)) {
                     player.sendMessage("§cHome '" + homeName + "' existiert nicht.");
                     break;
                 }
@@ -64,11 +58,11 @@ public class HomeCommand implements CommandExecutor {
                 break;
 
             case "delhome":
-                if (!homeManager.homeExists(player, homeName)) {
+                if (!homeManager.existsHome(player, homeName)) {
                     player.sendMessage("§cHome '" + homeName + "' existiert nicht.");
                     break;
                 }
-                homeManager.removeHome(player, homeName);
+                homeManager.deleteHome(player, homeName);
                 player.sendMessage("§cHome '" + homeName + "' gelöscht.");
                 break;
 

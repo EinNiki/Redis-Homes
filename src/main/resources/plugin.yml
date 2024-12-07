@@ -2,3 +2,8 @@ name: Redis-Homes
 version: '1.0-SNAPSHOT'
 main: de.devsnx.redisHomes.RedisHomes
 api-version: '1.21'
+
+commands:
+  sethome:
+  home:
+  delhome:

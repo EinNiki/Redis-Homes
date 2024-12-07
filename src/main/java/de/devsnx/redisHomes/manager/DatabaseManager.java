@@ -37,7 +37,7 @@ public class DatabaseManager {
      */
     private void setupDataSource(String host, int port, String database, String username, String password, int poolSize) {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&autoReconnect=true");
+        hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&autoReconnect=false");
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(poolSize);

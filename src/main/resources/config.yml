@@ -10,14 +10,15 @@ lang: en
 
 # Redis Server Connection
 redis:
-  host: "localhost"
+  host: redis
   port: 6379
-  username: "homes"
-  password: "homes"
+  username: "snx"
+  password: "Wa9AwE4dLP,c2äü"
 
 mysql:
-  host: "localhost"
+  host: mariadb
   port: 6379
-  username: "homes"
-  password: "homes"
-  database: "homes"
+  username: root
+  password: docker
+  database: homes
+  poolSize: 10
