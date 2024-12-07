@@ -7,11 +7,16 @@
 ##################################
 
 messages:
+  homes:
+    color: "&d"
+    split: "&7, "
   home:
+    nohomes: "&cDu hast aktuell keine Homes! &d/sethome <HomeName>"
+    homes: "&7Deine Homes %homes%"
     created: "&aDu hast das Home &d%home% &aerstellt."
     notexists: "&cDas home &d%home% &cexistiert nicht!"
     exists: "&cDas home &d%home% &cexistiert bereits!"
     deleted: "&cDu hast das Home &d%home% &cgelöscht."
     teleportet: "&7Du wurdest zu deinem Home &d%home% &7teleportiert."
     cannotteleport: "&cBei dem Teleport zu deinem Home &d%home% &cist ein Fehler aufgetreten."
-    syntax: "&cVerwendung: /home <HomeName> | /sethome <HomeName> | /delhome <HomeName>"
+    syntax: "&cVerwendung: /homes | /home <HomeName> | /sethome <HomeName> | /delhome <HomeName>"

@@ -192,18 +192,16 @@ public class HomeManager {
         Home home = getHome(player, homeName);
 
         if (home == null) {
-            player.sendMessage("Home \"" + homeName + "\" wurde nicht gefunden.");
             return false;
         }
 
         if (!CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(player.getUniqueId()).getConnectedServer().getName().equals(home.getServer())) {
-            player.sendMessage("Das Home \"" + homeName + "\" befindet sich auf einem anderen Server.");
             return false;
         }
 
         Location location = new Location(home.getWorld(), home.getX(), home.getY(), home.getZ(), home.getYaw(), home.getPitch());
         player.teleport(location);
-        player.sendMessage("Du wurdest zu deinem Home \"" + homeName + "\" teleportiert.");
+        player.sendMessage(RedisHomes.getInstance().getMessageManager().getMessage("messages.home.teleportet").replace("&", "§").replace("%home%", homeName));
         return true;
     }
 

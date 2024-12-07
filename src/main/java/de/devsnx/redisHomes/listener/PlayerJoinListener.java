@@ -4,9 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 /**
  * @author Marvin Hänel (DevSnx)
@@ -18,6 +16,6 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.addPotionEffect(PotionEffectType.BLINDNESS.createEffect(3 * 20, 0));
+        player.addPotionEffect(PotionEffectType.BLINDNESS.createEffect(4 * 20, 0));
     }
 }

@@ -39,6 +39,7 @@ public final class RedisHomes extends JavaPlugin {
 
         getCommand("sethome").setExecutor(new HomeCommand(homeManager));
         getCommand("home").setExecutor(new HomeCommand(homeManager));
+        getCommand("homes").setExecutor(new HomeCommand(homeManager));
         getCommand("delhome").setExecutor(new HomeCommand(homeManager));
 
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
@@ -97,7 +98,7 @@ public final class RedisHomes extends JavaPlugin {
 
                     Location location = new Location(world, x, y, z, yaw, pitch);
                     player.teleport(location);
-                    player.sendMessage(getMessageManager().getMessage("messages.home.teleportet").replace("&", "§").replace("%home%", homeName));
+                    player.sendMessage(getMessageManager().getMessage("home.teleportet").replace("&", "§").replace("%home%", homeName));
                 }, 40L);
             }
         });
