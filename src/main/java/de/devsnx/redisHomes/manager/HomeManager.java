@@ -1,11 +1,13 @@
 package de.devsnx.redisHomes.manager;
 
 import com.zaxxer.hikari.HikariDataSource;
+import de.devsnx.redisHomes.RedisHomes;
 import eu.thesimplecloud.api.CloudAPI;
 import eu.thesimplecloud.api.service.ICloudService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
@@ -25,13 +27,12 @@ import java.util.logging.Logger;
 public class HomeManager {
 
     private final HikariDataSource dataSource;
-    private final Jedis jedis;
     private Logger logger = Bukkit.getLogger();
+    private RedisManager redisManager;
 
     public HomeManager(RedisManager redisManager, DatabaseManager databaseManager) {
-        this.jedis = redisManager.getJedis();
         this.dataSource = databaseManager.getDataSource();
-
+        this.redisManager = redisManager;
         this.logger = logger;
 
         // Tabelle erstellen, falls sie nicht existiert
@@ -246,11 +247,11 @@ public class HomeManager {
                 .connect(iCloudService);
 
         // Redis-Nachricht vorbereiten
-        String channel = "home-teleport";
-        String message = String.format("%s:%s:%s:%s:%f:%f:%f:%f:%f",
+        String message = String.format("%s:%s:%s:%s:%s:%f:%f:%f:%f:%f",
                 player.getUniqueId().toString(),
                 player.getName(),
                 targetServer,
+                home.getName(),
                 home.getWorld().getName(),
                 home.getX(),
                 home.getY(),
@@ -258,10 +259,9 @@ public class HomeManager {
                 home.getYaw(),
                 home.getPitch());
 
-        // Nachricht an Redis senden
         try {
-            jedis.publish(channel, message);
-            logger.info("Redis: " + message);
+            redisManager.publish("home-teleport", message);
+            logger.severe("Redis Publish: " + message);
         } catch (Exception e) {
             logger.severe("Fehler beim Senden der Redis-Nachricht: " + e.getMessage());
             player.sendMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");

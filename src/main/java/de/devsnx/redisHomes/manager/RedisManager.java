@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.logging.Logger;
@@ -72,7 +73,40 @@ public class RedisManager {
         connect();
     }
 
-    public Jedis getJedis() {
-        return jedis;
+    /**
+     * Veröffentlicht eine Nachricht auf einem angegebenen Redis-Kanal.
+     * Diese Methode kann verwendet werden, um Nachrichten an alle Server zu senden, die den Kanal abonniert haben.
+     *
+     * @param channel Der Redis-Kanal, auf dem die Nachricht veröffentlicht werden soll.
+     * @param message Die Nachricht, die veröffentlicht werden soll.
+     */
+    public void publish(String channel, String message) {
+        if(jedis.isConnected()) {
+            jedis.publish(channel, message);
+        } else {
+            System.out.println("Redis-Verbindung nicht Aktiv, publish Fehlgeschlagen");
+        }
+    }
+
+
+    /**
+     * Abonniert einen Redis-Kanal und führt die angegebene Listener-Logik aus, wenn eine Nachricht empfangen wird.
+     * Diese Methode startet einen neuen Thread, um das Abonnement auszuführen, sodass es nicht blockierend ist.
+     *
+     * @param channel  Der Redis-Kanal, den du abonnieren möchtest.
+     * @param listener Der Listener, der aufgerufen wird, wenn eine Nachricht auf dem abonnierten Kanal empfangen wird.
+     */
+    public void subscribe(String channel, JedisPubSub listener) {
+        new Thread(() -> {
+            try (Jedis jedis = new Jedis(host, port)) {
+                // Authentifizierung, falls nötig
+                if (username != null && !username.isEmpty()) {
+                    jedis.auth(username, password);
+                } else if (password != null && !password.isEmpty()) {
+                    jedis.auth(password);
+                }
+                jedis.subscribe(listener, channel);
+            }
+        }).start();
     }
 }

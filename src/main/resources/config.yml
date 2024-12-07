@@ -5,9 +5,6 @@
 #                                #
 ##################################
 
-# Language (en, de)
-lang: en
-
 # Redis Server Connection
 redis:
   host: redis

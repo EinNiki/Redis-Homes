@@ -1,5 +1,6 @@
 package de.devsnx.redisHomes.commands;
 
+import de.devsnx.redisHomes.RedisHomes;
 import de.devsnx.redisHomes.manager.HomeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -24,14 +25,13 @@ public class HomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cNur Spieler können diesen Befehl verwenden.");
             return false;
         }
 
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage("§cVerwendung: /home <HomeName> | /sethome <HomeName> | /delhome <HomeName>");
+            player.sendMessage(getMessage("syntax"));
             return false;
         }
 
@@ -40,18 +40,18 @@ public class HomeCommand implements CommandExecutor {
         switch (command.getName().toLowerCase()) {
             case "sethome":
                 if (homeManager.existsHome(player, homeName)) {
-                    player.sendMessage("§cHome '" + homeName + "' existiert bereits.");
+                    player.sendMessage(getMessage("exists").replace("%home%", homeName));
                     break;
                 }
 
                 homeManager.setHome(player, homeName, player.getLocation());
 
-                player.sendMessage("§aHome '" + homeName + "' gesetzt.");
+                player.sendMessage(getMessage("created").replace("%home%", homeName));
                 break;
 
             case "home":
                 if (!homeManager.existsHome(player, homeName)) {
-                    player.sendMessage("§cHome '" + homeName + "' existiert nicht.");
+                    player.sendMessage(getMessage("notexists").replace("%home%", homeName));
                     break;
                 }
                 homeManager.teleportToServerAndHome(player, homeName);
@@ -59,17 +59,21 @@ public class HomeCommand implements CommandExecutor {
 
             case "delhome":
                 if (!homeManager.existsHome(player, homeName)) {
-                    player.sendMessage("§cHome '" + homeName + "' existiert nicht.");
+                    player.sendMessage(getMessage("notexists").replace("%home%", homeName));
                     break;
                 }
                 homeManager.deleteHome(player, homeName);
-                player.sendMessage("§cHome '" + homeName + "' gelöscht.");
+                player.sendMessage(getMessage("deleted").replace("%home%", homeName));
                 break;
 
             default:
-                player.sendMessage("§cUngültiger Befehl.");
                 return false;
         }
         return true;
+    }
+
+    private String getMessage (String path) {
+        String message = RedisHomes.getInstance().getMessageManager().getMessage("messages.home."+path).replace("&", "§");
+        return message;
     }
 }
