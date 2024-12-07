@@ -40,7 +40,7 @@ public class DatabaseManager {
         hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&autoReconnect=false");
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
-        hikariConfig.setMaximumPoolSize(poolSize);
+        //hikariConfig.setMaximumPoolSize(poolSize);
         hikariConfig.setMinimumIdle(2);
         hikariConfig.setIdleTimeout(30000); // Zeit, bis eine Verbindung geschlossen wird, wenn sie inaktiv ist
         hikariConfig.setMaxLifetime(1800000); // Maximale Lebenszeit einer Verbindung (30 Minuten)

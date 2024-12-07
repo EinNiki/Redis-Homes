@@ -15,10 +15,11 @@ redis:
   username: "snx"
   password: "Wa9AwE4dLP,c2äü"
 
+# MySQL Server Connection
 mysql:
-  host: mariadb
+  host: "127.0.0.1"
   port: 6379
-  username: root
-  password: docker
-  database: homes
+  username: "root"
+  password: "docker"
+  database: "homes"
   poolSize: 10
