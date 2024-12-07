@@ -4,7 +4,7 @@ import de.devsnx.redisHomes.commands.HomeCommand;
 import de.devsnx.redisHomes.manager.DatabaseManager;
 import de.devsnx.redisHomes.manager.HomeManager;
 import de.devsnx.redisHomes.manager.RedisManager;
-import net.md_5.bungee.api.ProxyServer;
+import eu.thesimplecloud.api.CloudAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,8 +29,7 @@ public final class RedisHomes extends JavaPlugin {
         getLogger().info("Redis connected.");
         databaseManager = new DatabaseManager(getConfig());
         getLogger().info("Database connected.");
-
-        homeManager = new HomeManager(redisManager, databaseManager);
+        homeManager = new HomeManager(this.redisManager, this.databaseManager);
 
         getCommand("sethome").setExecutor(new HomeCommand(homeManager));
         getCommand("home").setExecutor(new HomeCommand(homeManager));
@@ -75,8 +74,6 @@ public final class RedisHomes extends JavaPlugin {
                     double z = Double.parseDouble(parts[6]);
                     float yaw = Float.parseFloat(parts[7]);
                     float pitch = Float.parseFloat(parts[8]);
-
-                    if (!ProxyServer.getInstance().getName().equals(serverName)) return;
 
                     Bukkit.getScheduler().runTask(getInstance(), () -> {
                         Player player = Bukkit.getPlayer(playerName);

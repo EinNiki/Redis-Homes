@@ -2,7 +2,6 @@ package de.devsnx.redisHomes.manager;
 
 import com.zaxxer.hikari.HikariDataSource;
 import eu.thesimplecloud.api.CloudAPI;
-import net.md_5.bungee.api.ProxyServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -79,7 +78,7 @@ public class HomeManager {
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, player.getUniqueId().toString());
             statement.setString(2, homeName);
-            statement.setString(3, ProxyServer.getInstance().getName()); // Ersetzt durch den Servernamen
+            statement.setString(3, CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(player.getUniqueId()).getConnectedServer().getName()); // Ersetzt durch den Servernamen
             statement.setString(4, location.getWorld().getName());
             statement.setDouble(5, location.getX());
             statement.setDouble(6, location.getY());
@@ -195,7 +194,7 @@ public class HomeManager {
             return false;
         }
 
-        if (!ProxyServer.getInstance().getName().equals(home.getServer())) {
+        if (!CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(player.getUniqueId()).getConnectedServer().getName().equals(home.getServer())) {
             player.sendMessage("Das Home \"" + homeName + "\" befindet sich auf einem anderen Server.");
             return false;
         }
@@ -217,7 +216,7 @@ public class HomeManager {
             return;
         }
 
-        String currentServer = ProxyServer.getInstance().getName();
+        String currentServer = CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(player.getUniqueId()).getConnectedServer().getName();
         String targetServer = home.getServer();
 
         if (currentServer.equals(targetServer)) {
