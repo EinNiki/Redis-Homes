@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static java.sql.DriverManager.getConnection;
+
 /**
  * @author Marvin Hänel (DevSnx)
  * @since 03.12.2024 13:06
@@ -303,6 +305,30 @@ public class HomeManager {
         }
         return homes;
     }
+
+    /**
+     * Methode zum Abfragen ob der Spieler ein Home hat.
+     */
+    public boolean hasHome(Player player) {
+        String query = "SELECT EXISTS (SELECT 1 FROM homes WHERE player_uuid = ?)";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, player.getUniqueId().toString());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Fehler beim abfragen ob der Spieler ein Home hat: " + e.getMessage());
+        }
+
+        return false;
+    }
+
 
     /**
      * Klasse für Home-Daten.
