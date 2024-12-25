@@ -43,7 +43,8 @@ public class RedisManager {
 
             // Überprüfen, ob Benutzername und Passwort gesetzt sind
             if (username != null && !username.isEmpty()) {
-                jedis.auth(username, password); // Falls Redis ein Benutzername-Passwort-Paar erwartet
+                jedis.auth(username, password); //
+                // Falls Redis ein Benutzername-Passwort-Paar erwartet
             } else if (password != null && !password.isEmpty()) {
                 jedis.auth(password); // Nur Passwort verwenden, falls kein Benutzername benötigt wird
             }

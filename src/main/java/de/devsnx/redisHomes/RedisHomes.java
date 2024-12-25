@@ -1,12 +1,9 @@
 package de.devsnx.redisHomes;
 
 import de.devsnx.redisHomes.commands.HomeCommand;
+import de.devsnx.redisHomes.listener.InventoryClickListener;
 import de.devsnx.redisHomes.listener.PlayerJoinListener;
-import de.devsnx.redisHomes.manager.DatabaseManager;
-import de.devsnx.redisHomes.manager.HomeManager;
-import de.devsnx.redisHomes.manager.MessageManager;
-import de.devsnx.redisHomes.manager.RedisManager;
-import eu.thesimplecloud.api.CloudAPI;
+import de.devsnx.redisHomes.manager.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,6 +20,8 @@ public final class RedisHomes extends JavaPlugin {
     private DatabaseManager databaseManager;
     private HomeManager homeManager;
     private MessageManager messageManager;
+    private InventoryManager inventoryManager;
+
 
     @Override
     public void onEnable() {
@@ -36,6 +35,7 @@ public final class RedisHomes extends JavaPlugin {
         getLogger().info("Database connected.");
         homeManager = new HomeManager(this.redisManager, this.databaseManager);
         messageManager = new MessageManager(getDataFolder());
+        inventoryManager = new InventoryManager();
 
         getCommand("sethome").setExecutor(new HomeCommand(homeManager));
         getCommand("home").setExecutor(new HomeCommand(homeManager));
@@ -43,6 +43,7 @@ public final class RedisHomes extends JavaPlugin {
         getCommand("delhome").setExecutor(new HomeCommand(homeManager));
 
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
         subscribeToRedis();
 
         getLogger().info("==------ Redis Homes ------==");
@@ -118,6 +119,11 @@ public final class RedisHomes extends JavaPlugin {
 
     public RedisManager getRedisManager() {
         return this.redisManager;
+    }
+
+
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 
     public MessageManager getMessageManager() {

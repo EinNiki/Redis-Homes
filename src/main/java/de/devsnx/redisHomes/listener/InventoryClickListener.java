@@ -1,8 +1,7 @@
 package de.devsnx.redisHomes.listener;
 
 import de.devsnx.redisHomes.RedisHomes;
-import de.devsnx.redisHomes.manager.InventoryManager;
-import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,59 +12,45 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
-
         Player player = (Player) event.getWhoClicked();
+        ItemStack clickedItem = event.getCurrentItem();
 
-        ItemStack item = event.getCurrentItem();
-        String itemName = item.getItemMeta().getDisplayName();
-
-        if (event.getHotbarButton() != -1) {
-
-            item = event.getView().getBottomInventory().getItem(event.getHotbarButton());
-
-            if (item == null) {
-
-                item = event.getCurrentItem();
-
-            }
-        }
-
-        if (item == null || item.getType() == Material.AIR || item.hasItemMeta()) {return;}
-
-        /**
-         *  Click action, open other Inventory
-         */
-
-        if (event.getView().getTitle().equalsIgnoreCase("Deine Homes")) {
-
+        if (event.getView().getTitle().equalsIgnoreCase("Deine Homes") || event.getView().getTitle().startsWith("Löschen? : ")) {
             event.setCancelled(true);
 
-            if (RedisHomes.getInstance().getHomeManager().existsHome(player, itemName)) {
-                player.closeInventory();
-                player.openInventory(InventoryManager.openTeleportToHomeORDeletingTheHome(player, itemName));
-            }
+            if (clickedItem != null && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName()) {
+                String itemName = clickedItem.getItemMeta().getDisplayName();
 
-        }
+                if (event.getView().getTitle().equalsIgnoreCase("Deine Homes")) {
 
-        /**
-         *  Delete or Teleport to Player Homes
-         */
+                    if (RedisHomes.getInstance().getHomeManager().existsHome(player, itemName)) {
+                        if (event.isLeftClick()) {
 
-        if (event.getView().getTitle().startsWith("No Title")) {
-            if (event.getSlot() == 12 || event.getSlot() == 14) {
-                String[] array = event.getView().getTitle().split(" ");
-                String nameOfHome = array[2];
-
-                if (RedisHomes.getInstance().getHomeManager().existsHome(player, nameOfHome)) {
-                    if (event.getSlot() == 12) {
-                        player.closeInventory();
-                        RedisHomes.getInstance().getHomeManager().teleportToServerAndHome(player, nameOfHome);
-                    }
-                    if (event.getSlot() == 14) {
-                        if (event.isShiftClick()) {
                             player.closeInventory();
-                            player.sendMessage("Du hast erfolgreich dein Home (" + nameOfHome + ") gelöscht");
-                            RedisHomes.getInstance().getHomeManager().deleteHome(player, nameOfHome);
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_TELEPORT, 1.0F, 1.0F);
+                            RedisHomes.getInstance().getHomeManager().teleportToServerAndHome(player, clickedItem.getItemMeta().getDisplayName());
+
+                        } else if (event.isRightClick()) {
+
+                            player.closeInventory();
+                            player.openInventory(RedisHomes.getInstance().getInventoryManager().openDeletingInventory(player, itemName));
+                        }
+                    }
+
+
+                } else if (event.getView().getTitle().startsWith("Löschen? : ")) {
+
+                    event.setCancelled(true);
+                    if (RedisHomes.getInstance().getHomeManager().existsHome(player, itemName)) {
+                        if (event.isLeftClick()) {
+
+                            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, 1.0F, 1.0F);
+                            RedisHomes.getInstance().getHomeManager().deleteHome(player, itemName);
+                            player.closeInventory();
+                            player.sendMessage("§cDu hast erfolgreich das Home " + itemName + " gelöscht.");
+
+                        } else {
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0F, 1.0F);
                         }
                     }
                 }

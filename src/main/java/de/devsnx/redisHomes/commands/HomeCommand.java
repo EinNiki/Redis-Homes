@@ -2,6 +2,7 @@ package de.devsnx.redisHomes.commands;
 
 import de.devsnx.redisHomes.RedisHomes;
 import de.devsnx.redisHomes.manager.HomeManager;
+import de.devsnx.redisHomes.manager.InventoryManager;
 import org.bukkit.command.CommandExecutor;
 
 import org.bukkit.command.Command;
@@ -32,12 +33,10 @@ public class HomeCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length == 0) {
+
             if(command.getName().equals("homes")) {
                 if(!homeManager.getAllHomes(player).isEmpty()) {
-                    String homes = homeManager.getAllHomes(player).stream()
-                            .map(HomeManager.Home::getName)
-                            .collect(Collectors.joining(getMessage("homes.split") + getMessage("homes.color")));
-                    player.sendMessage(getMessage("home.homes").replace("%homes%", getMessage("homes.color") + homes));
+                    player.openInventory(RedisHomes.getInstance().getInventoryManager().openHomeInventory(player));
                     return true;
                 } else {
                     player.sendMessage(getMessage("home.nohomes"));
@@ -85,9 +84,14 @@ public class HomeCommand implements CommandExecutor {
         }else{
             player.sendMessage(getMessage("home.syntax"));
             return false;
+
+
         }
         return true;
+
     }
+
+
 
     private String getMessage (String path) {
         String message = RedisHomes.getInstance().getMessageManager().getMessage("messages."+path).replace("&", "§");
