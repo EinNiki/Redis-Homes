@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class HomeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             return false;
         }
@@ -36,7 +37,7 @@ public class HomeCommand implements CommandExecutor {
 
             if(command.getName().equals("homes")) {
                 if(!homeManager.getAllHomes(player).isEmpty()) {
-                    player.openInventory(RedisHomes.getInstance().getInventoryManager().openHomeInventory(player));
+                    player.openInventory(RedisHomes.getInstance().getInventoryManager().openHomeInventory(player, 0));
                     return true;
                 } else {
                     player.sendMessage(getMessage("home.nohomes"));

@@ -246,6 +246,10 @@ public class HomeManager {
                 .getCachedCloudPlayer(player.getUniqueId())
                 .connect(iCloudService);
 
+        //Teleport Message Send
+        player.sendMessage(RedisHomes.getInstance().getMessageManager().getMessage("messages.home.teleportet").replace("&", "§").replace("%home%", homeName));
+
+
         // Redis-Nachricht vorbereiten
         String message = String.format("%s:%s:%s:%s:%s:%f:%f:%f:%f:%f",
                 player.getUniqueId().toString(),
