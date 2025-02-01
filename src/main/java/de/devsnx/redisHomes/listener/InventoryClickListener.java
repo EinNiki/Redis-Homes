@@ -48,6 +48,7 @@ public class InventoryClickListener implements Listener {
 
                 Bukkit.getScheduler().runTaskLater(RedisHomes.getInstance(), () -> {
                     player.closeInventory();
+                    player.playSound(player.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1.0F, 1.0F);
                 }, 4L);
 
                 break;

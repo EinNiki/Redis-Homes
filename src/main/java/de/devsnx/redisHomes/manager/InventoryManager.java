@@ -2,9 +2,9 @@ package de.devsnx.redisHomes.manager;
 
 import de.devsnx.redisHomes.RedisHomes;
 import de.devsnx.redisHomes.utils.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import de.devsnx.redisHomes.utils.ServerInfo;
+import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -21,12 +21,7 @@ public class InventoryManager {
     public static final String INVENTORY_TITLE = "Deine Homes - Seite ";
     public static final String DELETE_INVENTORY_TITLE = "Löschen? : ";
 
-    private static final Map<String, String> SERVER_SKULL_TEXTURES = Map.of(
-            "feuerbrunnen-1", "7be942a3410c8081d3e4b2d634ddaabccb50ba6f39131f57877b402f6b315cef",
-            "nebelsphere-1", "25a71ef5a046c0f0150343f85c1c90f752ee0a390753bb9a40e0828e71edfd20",
-            "plotserver-1", "879146316f092d70bca006d34103c5807d1c9585c1e21f6b8df21171981aedba",
-            "gruenwald-1", "7be942a3410c8081d3e4b2d634ddaabccb50ba6f39131f57877b402f6b315cef"
-    );
+
 
     @NotNull
     public Inventory openHomeInventory(Player player, int page) {
@@ -74,18 +69,21 @@ public class InventoryManager {
         inventory.setItem(49, new ItemBuilder(Material.BARRIER).setDisplayName("§dClose").build());
     }
 
+
     private void setHomeItem(Inventory inventory, int slot, HomeManager.Home home) {
+
         inventory.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                .setDisplayName(home.getName())
+                .setDisplayName(ServerInfo.valueOf(home.getServer().replaceAll("-.*", "").toUpperCase()).getColor() + home.getName())
                 .setAmount(1)
                 .setLore(Arrays.asList(
-                        "§aServer Name: §6" + home.getServer(),
-                        "§aWorldname: §6" + home.getWorld().getName(),
-                        " ",
-                        "§bLinks Click zum Teleportieren",
-                        "§4Rechts Click zum Löschen."
+                        "§7 ",
+                        "§d§o▶ Linksklick §5- §d§lTeleportiere dich.",
+                        "§5§o▶ Rechtsklick §5- §4§lLösche diesen Eintrag.",
+                        "§7 "
                 ))
-                .setSkullOwner(SERVER_SKULL_TEXTURES.getOrDefault(home.getServer(), ""))
+
+
+                .setSkullOwner(ServerInfo.valueOf(home.getServer().replaceAll("-.*", "").toUpperCase()).getSkullTexture())
                 .build());
     }
 

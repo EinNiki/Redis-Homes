@@ -40,7 +40,7 @@ public class HomeCommand implements CommandExecutor {
                     player.openInventory(RedisHomes.getInstance().getInventoryManager().openHomeInventory(player, 0));
                     return true;
                 } else {
-                    player.sendMessage(getMessage("home.nohomes"));
+                    player.openInventory(RedisHomes.getInstance().getInventoryManager().openHomeInventory(player, 0));
                     return true;
                 }
             } else {
