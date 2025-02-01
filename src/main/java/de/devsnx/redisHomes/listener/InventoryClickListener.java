@@ -36,6 +36,7 @@ public class InventoryClickListener implements Listener {
 
     private void handleHomeInventoryClick(Player player, String itemName, InventoryClickEvent event) {
         RedisHomes plugin = RedisHomes.getInstance();
+        String cleanItemName = removeColorCodes(itemName);
 
         switch (itemName) {
             case "§dVorherige Seite":
@@ -53,11 +54,11 @@ public class InventoryClickListener implements Listener {
 
                 break;
             default:
-                if (plugin.getHomeManager().existsHome(player, itemName)) {
+                if (plugin.getHomeManager().existsHome(player, cleanItemName)) {
                     if (event.isLeftClick()) {
-                        teleportToHome(player, itemName);
+                        teleportToHome(player, cleanItemName);
                     } else if (event.isRightClick()) {
-                        openDeletingInventory(player, itemName);
+                        openDeletingInventory(player, cleanItemName);
                     }
                 }
                 break;
@@ -66,10 +67,11 @@ public class InventoryClickListener implements Listener {
 
     private void handleDeletingInventoryClick(Player player, String itemName, InventoryClickEvent event) {
         RedisHomes plugin = RedisHomes.getInstance();
+        String cleanItemName = removeColorCodes(itemName);
 
-        if (plugin.getHomeManager().existsHome(player, itemName)) {
+        if (plugin.getHomeManager().existsHome(player, cleanItemName)) {
             if (event.isLeftClick()) {
-                deleteHome(player, itemName);
+                deleteHome(player, cleanItemName);
             } else {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0F, 1.0F);
             }
@@ -113,5 +115,9 @@ public class InventoryClickListener implements Listener {
     private int getCurrentPage(String title) {
         String[] parts = title.split(" ");
         return Integer.parseInt(parts[parts.length - 1]) - 1;
+    }
+
+    private String removeColorCodes(String input) {
+        return input.replaceAll("(?i)§[0-9a-fk-or]", ""); // Entfernt alle Farbzeichen
     }
 }
